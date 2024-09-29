@@ -1,0 +1,26 @@
+https://docs.docker.com/compose/compose-application-model/
+https://github.com/vbachele/Inception/tree/main?tab=readme-ov-file
+
+1. What does the use of build / image in dockercompose.yaml
+In Docker Compose, build instructs Docker Compose to build an image based on the Dockerfile, and then run a container based on that image. image instructs Docker Compose to run a container based on the specified image.
+
+
+
+https://stackoverflow.com/questions/64121696/difference-between-sharing-a-dockerfile-and-a-docker-image
+
+TL;DR
+Pushing the image to a public repository would enable others to pull the built image and run it. Providing access to the source code and Dockerfile would enable others to build the image locally. They're not mutually exclusive.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+For example, I release public images to Docker Hub for running self-hosted GitHub Actions Runners in Kubernetes. The releases are done using GitHub Actions from the public GitHub repository. I plan on supporting released versions (tagged builds from a git tag) (i.e. if someone installs a released version and reports an issue) but at the same time everything is available for people to hack at it if they want too (+1 for opensource) without limits on what you're allowed to do (MIT License) - say you wanted to add some apt packages to the runner image, just do eeet then build and use your own image (... and if it makes sense for other users then maybe consider creating a pull request with the changes).
+
+You might be able to host a public repository with a proprietary license but would need to confirm the legality.
+
+You can definitely host a private repository and release public images but beware that if you're trying to hide your codez then you should expect people like me to inspect your image if I get my hands on it so I'd suggest building compiled binaries (i.e. go program built FROM scratch).
+
+You can also definitely host private repos and release your images to a private docker registry then control access to your images (i.e. distribute a docker-compose.yml configured with your private images and require that customer docker login to pull the images).
+
+
+
+Docker Build: How to Build a Docker Image from Dockerfile?
+https://www.cherryservers.com/blog/docker-build-command

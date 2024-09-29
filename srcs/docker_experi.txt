@@ -3,16 +3,16 @@ version: '3'
 services:
   nginx:
     container_name: nginx
-    # build: ./requirements/nginx
+    build: ./requirements/nginx
     image: nginx:alpine
     ports: 
         - '443:443'
-    # volumes:
-    #     - wordpress_vol:/var/www/html
-    # depends_on:
-    #     - wordpress
-    # networks:
-    #     - backend
+    volumes:
+        - wordpress_vol:/var/www/html
+    depends_on:
+        - wordpress
+    networks:
+        - backend
     restart: always
   
   # wordpress:
