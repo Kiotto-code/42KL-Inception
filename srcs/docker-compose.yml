@@ -1,59 +1,118 @@
-version: '3'
+# version: "3"
 
 services:
   nginx:
-    container_name: nginx
-    # build: ./requirements/nginx
-    image: nginx:alpine
-    ports: 
-        - '443:443'
-    # volumes:
-    #     - wordpress_vol:/var/www/html
-    # depends_on:
-    #     - wordpress
-    # networks:
-    #     - backend
-    restart: always
-  
-  # wordpress:
-  #   container_name: wordpress
-  #   build: ./requirements/wordpress
+    build: requirements/nginx
+    volumes:
+      - files:/var/www/html
+    ports:
+      - "443:443"
+    networks:
+      - network
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+    
+  mariadb:
+    build: requirements/mariadb
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - network
+    env_file:
+      - .env
+    healthcheck: 
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
 
-  #   volumes:
-  #       - wordpress_vol:/var/www/html
-  #   env_file:
-  #       - .env
-  #   depends_on:
-  #       - mariadb
+  wordpress:
+    build: requirements/wordpress
+    volumes:
+      - files:/var/www/html
+    networks:
+      - network
+    env_file:
+      - .env
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # adminer:
+  #   build: requirements/bonus/adminer
   #   networks:
-  #       - backend
-  #   restart: always
+  #     - network
+  #   restart: unless-stopped
 
-  # mariadb:
-  #   container_name: mariadb
-  #   build: ./requirements/mariadb
-  #   volumes:
-  #       - mariadb_vol:/var/lib/mysql
-  #   env_file:
-  #       - .env
+  # static:
+  #   build: requirements/bonus/static
   #   networks:
-  #       - backend
-  #   restart: always
+  #     - network
+  #   env_file:
+  #     - .env
+  #   restart: unless-stopped
 
-# networks:
-#   backend:
-#     driver: bridge
+  # redis:
+  #   build: requirements/bonus/redis
+  #   networks:
+  #     - network
+  #   restart: unless-stopped
 
-# volumes:
-#   wordpress_vol:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       device: /home/nwai-kea/data/wordpress_vol
-#       o: bind
-#   mariadb_vol:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       device: /home/nwai-kea/data/mariadb_vol
-#       o: bind
+  # ftp:
+  #   build: requirements/bonus/ftp
+  #   volumes:
+  #     - files:/var/www/html
+  #   networks:
+  #     - network
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "20:20"
+  #     - "21:21"
+  #     - "40000-40002:40000-40002"
+  #   restart: unless-stopped
+
+  # prometheus:
+  #   build: requirements/bonus/prometheus
+  #   volumes:
+  #     - prometheus:/var/lib/prometheus
+  #   networks:
+  #     - network
+  #   restart: unless-stopped
+
+  # node_exporter:
+  #   build: requirements/bonus/node_exporter
+  #   networks:
+  #     - network
+  #   restart: unless-stopped
+
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/maliew/data/db
+
+  files:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/maliew/data/files
+
+  prometheus:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/maliew/data/prometheus
+
+networks:
+  network:
+    driver: bridge

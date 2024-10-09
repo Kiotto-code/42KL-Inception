@@ -1,0 +1,8 @@
+WordPress and PHP Relationship:
+
+- WordPress is a content management system (CMS) that allows users to create and manage websites. It relies on PHP as its primary programming language for server-side logic.
+- PHP is a general-purpose scripting language that is especially suited for web development. WordPress uses PHP to process data, interact with databases, and generate HTML dynamically.
+
+FastCGI and PHP-FPM:
+
+- When we talk about configurations like fastcgi_pass wordpress:9000;, it indicates that a service (like PHP-FPM) is responsible for executing PHP code for WordPress. This means that PHP processes the requests made to WordPress.

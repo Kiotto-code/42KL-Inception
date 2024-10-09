@@ -1,0 +1,37 @@
+Docker Management Commands
+	docker --version: Displays the installed version of Docker.
+	docker info: Shows system-wide information about Docker.
+Image Management Commands
+	docker pull <image>: Downloads an image from a registry.
+	docker build -t <name>:<tag> <path>: Builds an image from a Dockerfile.
+	docker images: Lists all local images.
+	docker rmi <image>: Removes an image.
+	docker tag <source> <target>: Tags an image with a new name.
+Container Management Commands
+	docker run <options> <image>: Creates and starts a container.
+	docker ps: Lists running containers.
+	docker ps -a: Lists all containers (running and stopped).
+	docker stop <container>: Stops a running container.
+	docker start <container>: Starts a stopped container.
+	docker restart <container>: Restarts a running or stopped container.
+	docker rm <container>: Removes a stopped container.
+	docker exec -it <container> <command>: Executes a command inside a running container.
+	docker logs <container>: Displays logs from a container.
+Network Commands
+	docker network ls: Lists all networks.
+	docker network create <network>: Creates a new network.
+	docker network rm <network>: Removes a network.
+Volume Management Commands
+	docker volume ls: Lists all volumes.
+	docker volume create <volume>: Creates a new volume.
+	docker volume rm <volume>: Removes a volume.
+Docker Compose Commands
+	docker-compose up: Builds, (re)creates, starts, and attaches to containers for a service.
+	docker-compose down: Stops and removes containers, networks, images, and volumes.
+	docker-compose ps: Lists containers in a compose project.
+	System Commands
+	docker system prune: Removes unused data (stopped containers, networks, images).
+	docker stats: Displays a live stream of container resource usage statistics.
+Help Commands
+	docker help: Displays help information for Docker commands.
+	docker <command> --help: Displays help information for a specific command.
