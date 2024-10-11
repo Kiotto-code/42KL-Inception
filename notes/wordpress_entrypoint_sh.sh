@@ -17,7 +17,7 @@ if [ ! -e "./wp-config.php" ]; then
 	wp config set WP_REDIS_PORT 6379 --allow-root
 
 	wp core install --url=$DOMAIN_NAME \
-		--title="Inception" \
+		--title=$WP_TITLE \
 		--admin_user=$WP_ADMIN_USER \
 		--admin_password=$WP_ADMIN_PASSWORD \
 		--admin_email=$WP_ADMIN_EMAIL \
@@ -34,7 +34,7 @@ if [ ! -e "./wp-config.php" ]; then
 		--user_pass=$WP_USER_PASSWORD \
 		--first_name=$WP_USER_FNAME \
 		--last_name=$WP_USER_LNAME \
-		--user_url=$WP_USER_URL \
+		# --user_url=$WP_USER_URL \
 		--allow-root
 
 	chown -R www-data:www-data .
