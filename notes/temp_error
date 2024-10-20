@@ -1,0 +1,11 @@
+mariadb    | Version: '10.5.26-MariaDB-0+deb11u2'  socket: '/run/mysqld/mysqld.sock'  port: 3306  Debian 11
+mariadb    | 2024-10-14 16:00:48 3 [Warning] Access denied for user 'root'@'localhost' (using password: NO)
+wordpress  | Error: WordPress files seem to already be present here.
+wordpress  | Error: Database connection error (2002) No such file or directory
+nginx      | sed: read error on /etc/nginx/conf.d/: Is a directory
+wordpress  | Error: 'wp-config.php' not found.
+wordpress  | Either create one manually or use `wp config create`.
+nginx      | nginx: [emerg] a duplicate default server for 0.0.0.0:80 in /etc/nginx/sites-enabled/default:22
+wordpress  | Error: 'wp-config.php' not found.
+wordpress  | Either create one manually or use `wp config create`.
+wordpress  | Error: 'wp-config.php' not found.

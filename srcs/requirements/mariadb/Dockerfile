@@ -1,6 +1,6 @@
-
-
 FROM debian:bullseye
+
+RUN groupadd -r mysql && useradd -r -g mysql mysql --home-dir /var/lib/mysql
 
 RUN apt-get -y update
 RUN apt-get -y install mariadb-server \

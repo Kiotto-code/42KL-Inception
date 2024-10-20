@@ -3,6 +3,7 @@ FROM debian:bullseye
 RUN apt-get -y update
 RUN apt-get -y install php7.4 php-fpm php-mysqli wget curl \
 	&& rm -rf /var/lib/apt/lists/*
+# rm -rf /var/lib/apt/lists/* ->for more reliable apt-get update.(https://github.com/rocker-org/r-devel-san-clang/pull/8)
 
 ADD https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/local/bin/wp
 RUN chmod +x /usr/local/bin/wp

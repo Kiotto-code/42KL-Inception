@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# sed -i "s/NGINX_PORT/$NGINX_PORT/g" /etc/nginx/conf.d/default.conf
-sed "s/localhost/$DOMAIN_NAME/g" /etc/nginx/sites-available/nginx.conf
+sed -i "s/my_cert/$ssl_certificate/g" /etc/nginx/sites-available/default
+sed -i "s/my_key/$ssl_certificate_key/g" /etc/nginx/sites-available/default
+sed -i "s/localhost/$nginx_domain/g" /etc/nginx/sites-available/default   
 
-exec "$@" # exec nginx -g 'daemon off;' (daemon off is the default command in the nginx image)
+nginx -g "daemon off;"

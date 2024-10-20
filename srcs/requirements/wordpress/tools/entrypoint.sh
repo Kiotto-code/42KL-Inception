@@ -1,35 +1,44 @@
 #!/bin/bash
 
-touch /run/php/php7.3-fpm.pid;
+mkdir -p /run/php/
+touch /run/php/php7.4-fpm.pid
 
-if [ -d /var/www/html/wp-config.php ]; then
-	echo "Wordpress wp-config.php exists"
-else
-	#MANDATORY
-	echo "Wordpress setting up"
-	mkdir -p /var/www/html
-	# wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
-	# chmod +x wp-cli.phar; 
-	# mv wp-cli.phar /usr/local/bin/wp;
-	cd /var/www/html;
-	wp core download --allow-root;
-	
-	wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOSTNAME --allow-root 
-	wp core install --allow-root --url=$DOMAIN_NAME --title="Inception" --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL
-	wp user create $WP_USER $WP_USER_EMAIL --user_pass=$WP_USER_PASSWORD --display_name=$WP_USER --role=authot --allow-root
-	
-	wp theme install bizboost --activate --allow-root  
+if [ ! -e "./wp-config.php" ]; then
 
-	#BONUS
-	wp config set WP_REDIS_HOST redis --add --allow-root
-    wp config set WP_REDIS_PORT 6379 --add --allow-root  
-    wp config set WP_CACHE true --add --allow-root 
-	wp plugin install redis-cache --activate --allow-root  
-    wp plugin update --all --allow-root  
-    wp redis enable --allow-root
+	wp core download --allow-root
 
-	wp CREATE USER $MYSQL_USER@'%' IDENTIFIED BY $MYSQL_PASSWORD;
-	echo "Redis setup success"
+	wp config create --dbname=$MYSQL_DATABASE \
+	--dbuser=$MYSQL_USER \
+	--dbpass=$MYSQL_PASSWORD \
+	--dbhost=$MYSQL_HOSTNAME \
+	--allow-root
+
+	wp config set WP_REDIS_HOST redis --allow-root
+	wp config set WP_REDIS_PORT 6379 --allow-root
+
+	wp core install --url=$DOMAIN_NAME \
+		--title="Inception" \
+		--admin_user=$WP_ADMIN_USER \
+		--admin_password=$WP_ADMIN_PASSWORD \
+		--admin_email=$WP_ADMIN_EMAIL \
+		--allow-root
+
+	wp plugin install redis-cache --allow-root
+	wp plugin update --all --allow-root
+	wp plugin activate redis-cache --allow-root
+	wp redis enable --allow-root
+	wp cache flush --allow-root
+
+	wp user create $WP_USER $WP_USER_EMAIL \
+		--role=subscriber \
+		--user_pass=$WP_USER_PASSWORD \
+		--first_name=$WP_USER_FNAME \
+		--last_name=$WP_USER_LNAME \
+		--user_url=$WP_USER_URL \
+		--allow-root
+
+	chown -R www-data:www-data .
+	chmod -R 775 .
 fi
 
 exec "$@"

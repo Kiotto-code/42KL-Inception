@@ -1,48 +1,29 @@
 
-#VOLUME
-DB_PATH=/home/yichan/data/mariadn
-WP_PATH=/home/yichan/data/wordpress
+DB_DATA= /home/yichan/data/mysql
+WP_DATA= /home/yichan/data/wordpress
+DOCKER_COMPOSE= docker compose
+DOCKER_COMPOSE_FILE= ./srcs/docker-compose.yml
 
-all: up
-
-up:
-	@mkdir -p $(WP_DATA) || true
-	@mkdir -p $(DB_DATA) || true
-	docker compose -f ./srcs/docker-compose.yml up -d
+all: build-up
 
 build-up:
-	@mkdir -p $(WP_DATA) || true
-	@mkdir -p $(DB_DATA) || true
-	docker compose -f ./srcs/docker-compose.yml up --build -d
+	@mkdir -p $(WP_DATA)
+	@mkdir -p $(DB_DATA)
+	docker compose -f ./srcs/docker-compose.yml up --build
 
+kill:
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) kill
 down:
-	docker compose -f ./srcs/docker-compose.yml down
-
-# rebuild: down build-up
-
-# restart: down up
-
-prune: clean
-	@docker system prune -a --volumes -f
-
-# ssl:
-# 	./srcs/requirements/tools/ssl.sh
-
-stop:
-	docker compose -f ./srcs/docker-compose.yml stop
-
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
 clean:
-	@docker stop $$(docker ps -qa) || true
-	@docker rm $$(docker ps -qa) || true
-	@docker rmi -f $$(docker images -qa) || true
-	@docker volume rm $$(docker volume ls -q) || true
-	@docker network rm $$(docker network ls -q) || true
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v
 
-restart:	down up
+fclean: clean
+	rm -r /home/yichan/data/mysql
+	rm -r /home/yichan/data/wordpress
+	docker system prune -a -f
 
-rebuild:	down prune build-up
-
-re:		prune build-up
+restart: clean build-up
 
 mrdb:
 	@docker exec -it mariadb /bin/bash
