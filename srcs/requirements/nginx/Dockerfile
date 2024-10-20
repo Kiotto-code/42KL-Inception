@@ -10,6 +10,8 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 COPY ./tools/certs.sh /tmp/certs.sh
 
+COPY conf/404.html /usr/share/nginx/html/404.html
+
 RUN chmod +x /tmp/certs.sh
 
 COPY ./conf/default /etc/nginx/sites-available/default
