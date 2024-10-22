@@ -1,33 +1,71 @@
-#!bin/bash
+#!/bin/bash
 
-sleep 10
+mkdir -p /run/php/
+touch /run/php/php7.4-fpm.pid
 
-if [ ! -f /var/www/html/wp-config.php ]; then
-    wp config create --dbname=$database_name --dbuser=$mysql_user \
-        --dbpass=$mysql_password --dbhost=$mysql_host --allow-root  --skip-check
 
-    wp core install --url=$domain_name --title=$brand --admin_user=$wordpress_admin \
-        --admin_password=$wordpress_admin_password --admin_email=$wordpress_admin_email \
-        --allow-root
+if [ ! -e "./wp-config.php" ]; then
 
-    wp user create $login $wp_user_email --role=author --user_pass=$wp_user_pwd --allow-root
-    wp config set FORCE_SSL_ADMIN 'false' --allow-root
-    wp config  set WP_REDIS_HOST $redis_host --allow-root
-    wp config set WP_REDIS_PORT $redis_port --allow-root
-    wp config  set WP_CACHE 'true' --allow-root
-    wp plugin install redis-cache --allow-root
-    wp plugin activate redis-cache --allow-root
-    wp redis enable --allow-root
-    chmod 777 /var/www/html/wp-content
+	wp core download --allow-root
 
-    # install theme
+	wp config create --dbname=$database_name \
+	--dbuser=$mysql_user \
+	--dbpass=$mysql_password \
+	--dbhost=$mysql_host \
+	--allow-root
 
-    wp theme install twentyfifteen
+	wp config set WP_REDIS_HOST redis --allow-root
+	wp config set WP_REDIS_PORT 6379 --allow-root	
 
-    wp theme activate twentyfifteen
+	wp core install --url=$domain_name \
+		--title="inception" \
+		--admin_user=$wordpress_admin \
+		--admin_password=$wordpress_admin_password \
+		--admin_email=$wordpress_admin_email \
+		--allow-root
 
-    wp theme update twentyfifteen
+	wp plugin install redis-cache --allow-root
+	wp plugin update --all --allow-root
+	wp plugin activate redis-cache --allow-root
+	wp redis enable --allow-root
+	wp cache flush --allow-root
+
+	wp user create $login $wp_user_email \
+		--role=subscriber \
+		--user_pass=$wp_user_pwd \
+		--user_url=$wp_user_url \
+		--allow-root
+		# --first_name=$WP_USER_FNAME \
+		# --last_name=$WP_USER_LNAME \
+
+	 #   wp config  set WP_DEBUG true  --allow-root
+
+    # wp config set FORCE_SSL_ADMIN 'false' --allow-root
+
+    # wp config  set WP_REDIS_HOST $redis_host --allow-root
+
+    # wp config set WP_REDIS_PORT $redis_port --allow-root
+
+    # wp config  set WP_CACHE 'true' --allow-root
+
+    # wp plugin install redis-cache --allow-root
+
+    # wp plugin activate redis-cache --allow-root
+
+    # wp redis enable --allow-root
+
+    # chmod 777 /var/www/html/wp-content
+
+    # # install theme
+
+    # wp theme install twentyfifteen
+
+    # wp theme activate twentyfifteen
+
+    # wp theme update twentyfifteen
+
+	chown -R www-data:www-data .
+	chmod -R 775 .
 fi
 
-
-/usr/sbin/php-fpm7.3 -F
+exec "$@"

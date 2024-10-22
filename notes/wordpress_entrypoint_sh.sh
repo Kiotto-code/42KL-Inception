@@ -4,8 +4,8 @@ mkdir -p /run/php/
 touch /run/php/php7.4-fpm.pid
 
 if [ ! -e "./wp-config.php" ]; then
-
 	wp core download --allow-root
+
 
 	wp config create --dbname=$WP_DATABASE_NAME \
 	--dbuser=$WP_DATABASE_USER \
@@ -13,8 +13,8 @@ if [ ! -e "./wp-config.php" ]; then
 	--dbhost=$WP_DATABASE_HOST \
 	--allow-root
 
-	wp config set WP_REDIS_HOST redis --allow-root
-	wp config set WP_REDIS_PORT 6379 --allow-root
+	# wp config set WP_REDIS_HOST redis --allow-root
+	# wp config set WP_REDIS_PORT 6379 --allow-root
 
 	wp core install --url=$DOMAIN_NAME \
 		--title=$WP_TITLE \
