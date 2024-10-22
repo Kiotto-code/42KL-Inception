@@ -2,50 +2,48 @@ version: "3"
 
 services:
   nginx:
+    build: ./requirements/nginx
+    image: nginx
     container_name: nginx
-    build: requirements/nginx
     volumes:
-      - wordpress:/var/www/html
+      - wp:/var/www/html
     ports:
-      - "443:443"
+      - 443:443
     networks:
-      - network
-    env_file:
-      - .env
+      - inception_net
     depends_on:
       - wordpress
-    restart: unless-stopped
+    restart: on-failure
     
   mariadb:
+    build: ./requirements/mariadb
+    image: mariadb
     container_name: mariadb
-    build: requirements/mariadb
     volumes:
-      - mariadb:/var/lib/mysql
-    networks:
-      - network
+      - mdb:/var/lib/mysql
+    expose:
+        - "3306"
     env_file:
       - .env
-    # healthcheck: 
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 5
-    restart: unless-stopped
+    networks:
+      - inception_net
+    restart: on-failure
 
   wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
     container_name: wordpress
-    build: requirements/wordpress
     volumes:
-      - wordpress:/var/www/html
-    networks:
-      - network
-    env_file:
-      - .env
+      - wp:/var/www/html
     depends_on:
       - mariadb
-      # mariadb:
-      #   condition: service_healthy
-    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - inception_net
+    expose:
+      - "9000"
+    restart: on-failure
 
 #BONUS_PART
 
@@ -98,14 +96,14 @@ services:
   #   restart: unless-stopped
 
 volumes:
-  mariadb:
+  mdb:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/yichan/data/mariadb
+      device: /home/yichan/data/mysql
 
-  wordpress:
+  wp:
     driver: local
     driver_opts:
       type: none
@@ -120,5 +118,5 @@ volumes:
   #     device: /home/yichan/data/prometheus
 
 networks:
-  network:
+   inception_net:
     driver: bridge

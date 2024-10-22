@@ -31,6 +31,7 @@ fclean: clean
 	docker system prune -a -f
 
 restart: clean build-up
+clean-restart: fclean build-up
 
 mrdb:
 	@docker exec -it mariadb /bin/bash
