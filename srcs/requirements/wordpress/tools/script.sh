@@ -2,6 +2,10 @@
 
 # wait for mysql to start
 sleep 10
+
+mkdir -p /run/php/
+touch /run/php/php7.4-fpm.pid
+
 # Install Wordpress
 
 if [ ! -f /var/www/html/wp-config.php ]; then
