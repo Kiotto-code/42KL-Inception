@@ -1,20 +1,6 @@
 version: "3.7"
 
 services:
-  nginx:
-    build: ./requirements/nginx
-    image: nginx
-    container_name: nginx
-    volumes:
-      - wp:/var/www/html
-    ports:
-      - 443:443
-    networks:
-      - inception_net
-    depends_on:
-      - wordpress
-    restart: on-failure
-    
   mariadb:
     build: ./requirements/mariadb
     image: mariadb
@@ -28,7 +14,6 @@ services:
     networks:
       - inception_net
     restart: on-failure
-
   wordpress:
     build: ./requirements/wordpress
     image: wordpress
@@ -44,56 +29,32 @@ services:
     expose:
       - "9000"
     restart: on-failure
+  
+  nginx:
+    build: ./requirements/nginx
+    image: nginx
+    container_name: nginx
+    volumes:
+      - wp:/var/www/html
+    ports:
+      - 443:443
+    networks:
+      - inception_net
+    depends_on:
+      - wordpress
+    env_file:
+      - .env
+    restart: on-failure
 
-#BONUS_PART
-
-  # adminer:
-  #   build: requirements/bonus/adminer
-  #   networks:
-  #     - network
-  #   restart: unless-stopped
-
-  # static:
-  #   build: requirements/bonus/static
-  #   networks:
-  #     - network
-  #   env_file:
-  #     - .env
-  #   restart: unless-stopped
-
-  # redis:
-  #   build: requirements/bonus/redis
-  #   networks:
-  #     - network
-  #   restart: unless-stopped
-
-  # ftp:
-  #   build: requirements/bonus/ftp
-  #   volumes:
-  #     - files:/var/www/html
-  #   networks:
-  #     - network
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "20:20"
-  #     - "21:21"
-  #     - "40000-40002:40000-40002"
-  #   restart: unless-stopped
-
-  # prometheus:
-  #   build: requirements/bonus/prometheus
-  #   volumes:
-  #     - prometheus:/var/lib/prometheus
-  #   networks:
-  #     - network
-  #   restart: unless-stopped
-
-  # node_exporter:
-  #   build: requirements/bonus/node_exporter
-  #   networks:
-  #     - network
-  #   restart: unless-stopped
+  redis:
+    build: ./requirements/bonus/redis
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+    networks:
+      - inception_net
+    restart: on-failure
 
 volumes:
   mdb:

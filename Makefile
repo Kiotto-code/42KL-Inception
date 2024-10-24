@@ -1,20 +1,20 @@
+DOCKER_COMPOSE=docker compose
 
-DB_DATA= /home/yichan/data/mysql
-WP_DATA= /home/yichan/data/wordpress
-DOCKER_COMPOSE= docker compose
-DOCKER_COMPOSE_FILE= ./srcs/docker-compose.yml
+DOCKER_COMPOSE_FILE = ./srcs/docker-compose.yml
 
-all: build-up
+.PHONY: kill build down clean restart
 
-build-up:
-	@mkdir -p $(WP_DATA)
-	@mkdir -p $(DB_DATA)
-	docker compose -f ./srcs/docker-compose.yml up --build
+build:
+	mkdir -p /home/yichan/data/mysql
+	mkdir -p /home/yichan/data/wordpress
+	@$(DOCKER_COMPOSE)  -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 kill:
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) kill
+
 down:
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
+
 clean:
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v
 
@@ -26,12 +26,9 @@ pre-clean:
 	@docker network rm $$(docker network ls -q) || true
 
 fclean: clean
-	rm -r /home/yichan/data/mysql
-	rm -r /home/yichan/data/wordpress
+	rm -r /home/yichan/data/mysql || true
+	rm -r /home/yichan/data/wordpress || true
 	docker system prune -a -f
-
-restart: clean build-up
-clean-restart: fclean build-up
 
 mrdb:
 	@docker exec -it mariadb /bin/bash
@@ -42,9 +39,6 @@ ngx:
 wp:
 	@docker exec -it wordpress /bin/bash
 
+restart: clean build
 
-# reset:		fclean all
-
-# docker-compose up: This command does the work of the docker-compose build and docker-compose run commands. I
-# docker-compose down: This command is similar to the docker system prune command. However, in Compose, it stops all the services and cleans up the containers, networks, and images.
-# docker-compose logs: This command is used to view the logs of the services running in the docker-compose.yml file.
+fclean-restart: fclean restart

@@ -1,17 +1,31 @@
 FROM debian:bullseye
 
-RUN apt-get -y update
-RUN apt-get -y install php7.4 php-fpm php-mysqli wget curl
+# COPY ./conf/wordpress_pool.conf /etc/php/7.4/fpm/pool.d/www.conf
 
-ADD https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/local/bin/wp
-RUN chmod +x /usr/local/bin/wp
+RUN apt-get update -y \
+	&& apt-get upgrade -y \
+	&& apt-get install -y \
+	php php-fpm php-mysql mariadb-server curl \
+	vim \
+	; \
+	rm -rf /var/lib/apt/lists/*
+	# vim && \
+    # sed -i -e 's/listen =.*/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
 
-COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
-COPY ./tools/wp_entrypoint.sh /tmp/entrypoint.sh
+# RUN apt-get install -y 
 
-RUN chmod +x /tmp/entrypoint.sh
-EXPOSE 9000
+RUN mkdir -p /run/php
+
 WORKDIR /var/www/html
+RUN chown -R www-data:www-data /var/www/html
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
-ENTRYPOINT ["/tmp/entrypoint.sh"]
-CMD ["/usr/sbin/php-fpm7.4", "-F"]
+RUN wp core download --allow-root
+
+COPY ./tools/script.sh .
+
+RUN chmod +x script.sh
+
+ENTRYPOINT ["bash", "script.sh"]

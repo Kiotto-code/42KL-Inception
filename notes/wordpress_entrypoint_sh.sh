@@ -13,8 +13,8 @@ if [ ! -e "./wp-config.php" ]; then
 	--dbhost=$WP_DATABASE_HOST \
 	--allow-root
 
-	# wp config set WP_REDIS_HOST redis --allow-root
-	# wp config set WP_REDIS_PORT 6379 --allow-root
+	wp config set WP_REDIS_HOST redis --allow-root
+	wp config set WP_REDIS_PORT 6379 --allow-root
 
 	wp core install --url=$DOMAIN_NAME \
 		--title=$WP_TITLE \
