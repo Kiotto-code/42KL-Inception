@@ -14,7 +14,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --dbpass=$mysql_password --dbhost=$mysql_host --allow-root  --skip-check
 	# wp user create $domain_name $wordpress_admin_email --role=administrator --user_pass=$wordpress_admin_password --allow-root
 
-    wp core install --url=$domain_name --title=$brand --admin_user=$wordpress_admin \
+    wp core install --url=$domain_name --title=$site_title --admin_user=$wordpress_admin \
         --admin_password=$wordpress_admin_password --admin_email=$wordpress_admin_email \
         --allow-root
 

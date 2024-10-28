@@ -1,6 +1,7 @@
 version: "3.7"
 
 services:
+
   mariadb:
     build: ./requirements/mariadb
     image: mariadb
@@ -9,11 +10,14 @@ services:
       - mdb:/var/lib/mysql
     expose:
         - "3306"
-    env_file:
-      - .env
+    secrets:
+      - mysql_credentials
+      - mysql_root_credentials
+
     networks:
       - inception_net
     restart: on-failure
+
   wordpress:
     build: ./requirements/wordpress
     image: wordpress
@@ -56,7 +60,20 @@ services:
       - inception_net
     restart: on-failure
 
+  # adminer:
+  #   build: ./requirements/bonus/adminer
+  #   image: adminer
+  #   container_name: adminer
+  #   networks:
+  #     - inception_net
+  #   depends_on:
+  #     - mariadb
+  #   ports:
+  #     - 8080:8080
+  #   restart: on-failure
+
 volumes:
+
   mdb:
     driver: local
     driver_opts:
@@ -81,3 +98,9 @@ volumes:
 networks:
    inception_net:
     driver: bridge
+
+secrets:
+  mysql_credentials:
+    file: ../secrets/db_password.txt
+  mysql_root_credentials:
+    file: ../secrets/db_root_password.txt

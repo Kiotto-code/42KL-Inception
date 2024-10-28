@@ -18,10 +18,14 @@ RUN mkdir -p /run/php
 
 WORKDIR /var/www/html
 RUN chown -R www-data:www-data /var/www/html
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && \
-    mv wp-cli.phar /usr/local/bin/wp
 
+# RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+#     chmod +x wp-cli.phar && \
+#     mv wp-cli.phar /usr/local/bin/wp
+
+ADD https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/local/bin/wp
+
+RUN chmod +x /usr/local/bin/wp
 RUN wp core download --allow-root
 
 COPY ./tools/script.sh .
