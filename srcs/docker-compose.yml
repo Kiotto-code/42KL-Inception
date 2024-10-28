@@ -10,10 +10,8 @@ services:
       - mdb:/var/lib/mysql
     expose:
         - "3306"
-    secrets:
-      - mysql_credentials
-      - mysql_root_credentials
-
+    env_file:
+      - .env
     networks:
       - inception_net
     restart: on-failure

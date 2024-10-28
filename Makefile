@@ -26,8 +26,8 @@ pre-clean:
 	@docker network rm $$(docker network ls -q) || true
 
 fclean: clean
-	rm -r /home/yichan/data/mysql -y || true
-	rm -r /home/yichan/data/wordpress -y || true
+	rm -r /home/yichan/data/mysql || true
+	rm -r /home/yichan/data/wordpress || true
 	docker system prune -a -f
 
 mrdb:
